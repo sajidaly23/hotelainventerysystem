@@ -79,14 +79,7 @@ export const getInventoryReport = async () => {
     },
     { $unwind: "$item" },
 
-    {
-      $lookup: {
-        from: "transactions",
-        localField: "item._id",
-        foreignField: "item",
-        as: "transactions"
-      }
-    },
+   
 
     {
       $addFields: {
