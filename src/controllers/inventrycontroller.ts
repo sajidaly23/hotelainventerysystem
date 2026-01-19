@@ -22,6 +22,22 @@ export const listCategories = async (_: Request, res: Response) => {
   }
 };
 
+export const editCategory = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const updatedCategory = await InventoryService.updateCategory("id", req.body);
+
+    if (!updatedCategory) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+
+    res.json(updatedCategory);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to update category", error });
+  }
+};
+
  //SUPPLIER CONTROLLERS
 
 export const addSupplier = async (req: Request, res: Response) => {

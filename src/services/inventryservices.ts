@@ -7,6 +7,13 @@ import Transaction from "../model/transactionmodel";
 // CATEGORY
 export const createCategory = (data: any) => Category.create(data);
 export const getCategories = () => Category.find({ isActive: true });
+export const updateCategory = (id: string, data: any) => {
+  return Category.findByIdAndUpdate(id, data, { new: true });
+};
+
+export const getCategoryById = (id: string) => {
+  return Category.findOne({ _id: id, isActive: true });
+};
 
 // SUPPLIER
 export const createSupplier = (data: any) => Supplier.create(data);

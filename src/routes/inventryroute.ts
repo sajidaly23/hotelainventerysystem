@@ -6,6 +6,7 @@ const router = Router();
 
 router.post("/categories", authMiddleware, controller.addCategory);
 router.get("/categories", controller.listCategories);
+router.put("/categories/:id", authMiddleware, controller.editCategory);
 
 router.post("/suppliers", authMiddleware, controller.addSupplier);
 router.get("/suppliers", controller.listSuppliers);
