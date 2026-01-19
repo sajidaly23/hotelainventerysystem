@@ -65,3 +65,75 @@ export const stockOut = async (itemId: string, quantity: number) => {
 // STOCK LIST
 export const getStock = () =>
   Stock.find().populate("item", "name sku");
+
+
+export const getInventoryReport = async () => {
+  const report = await Stock.aggregate([
+    {
+      $lookup: {
+        from: "items",
+        localField: "item",
+        foreignField: "_id",
+        as: "item"
+      }
+    },
+    { $unwind: "$item" },
+
+    {
+      $lookup: {
+        from: "transactions",
+        localField: "item._id",
+        foreignField: "item",
+        as: "transactions"
+      }
+    },
+
+    {
+      $addFields: {
+        totalIn: {
+          $sum: {
+            $map: {
+              input: {
+                $filter: {
+                  input: "$transactions",
+                  as: "t",
+                  cond: { $eq: ["$$t.type", "IN"] }
+                }
+              },
+              as: "inTran",
+              in: "$$inTran.quantity"
+            }
+          }
+        },
+        totalOut: {
+          $sum: {
+            $map: {
+              input: {
+                $filter: {
+                  input: "$transactions",
+                  as: "t",
+                  cond: { $eq: ["$$t.type", "OUT"] }
+                }
+              },
+              as: "outTran",
+              in: "$$outTran.quantity"
+            }
+          }
+        }
+      }
+    },
+
+    {
+      $project: {
+        _id: 0,
+        itemName: "$item.name",
+        sku: "$item.sku",
+        currentStock: "$quantity",
+        totalIn: 1,
+        totalOut: 1
+      }
+    }
+  ]);
+
+  return report;
+};

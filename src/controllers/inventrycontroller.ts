@@ -117,3 +117,12 @@ export const listStock = async (_: Request, res: Response) => {
     res.status(500).json({ message: "Failed to fetch stock", error });
   }
 };
+
+export const inventoryReport = async (req: Request, res: Response) => {
+  try {
+    const report = await InventoryService.getInventoryReport();
+    res.json(report);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to generate inventory report", error });
+  }
+};
