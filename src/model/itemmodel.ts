@@ -6,8 +6,6 @@ export interface IItem extends Document {
   category: mongoose.Types.ObjectId;
   supplier: mongoose.Types.ObjectId;
   unit: string;
-  costPrice: number;
-  sellingPrice?: number;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -21,12 +19,7 @@ const itemSchema = new Schema<IItem>(
       trim: true
     },
 
-    sku: {
-      type: String,
-      required: true,
-      unique: true
-    },
-
+ 
     category: {
       type: Schema.Types.ObjectId,
       ref: "Category",
@@ -45,14 +38,7 @@ const itemSchema = new Schema<IItem>(
       default: "pcs"
     },
 
-    costPrice: {
-      type: Number,
-      required: true
-    },
-
-    sellingPrice: {
-      type: Number
-    },
+  
 
     isActive: {
       type: Boolean,

@@ -116,16 +116,16 @@ export const getInventoryReport = async () => {
       }
     },
 
-    {
-      $project: {
-        _id: 0,
-        itemName: "$item.name",
-        sku: "$item.sku",
-        currentStock: "$quantity",
-        totalIn: 1,
-        totalOut: 1
-      }
-    }
+    // {
+    //   $project: {
+    //     _id: 0,
+    //     itemName: "$item.name",
+    //     sku: "$item.sku",
+    //     currentStock: "$quantity",
+    //     totalIn: 1,
+    //     totalOut: 1
+    //   }
+    // }
   ]);
 
   return report;

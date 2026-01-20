@@ -1,24 +1,39 @@
 import { Request, Response } from "express";
 import * as InventoryService from "../services/inventryservices";
 
-   //CATEGORY CONTROLLERS
 
 
 export const addCategory = async (req: Request, res: Response) => {
   try {
     const category = await InventoryService.createCategory(req.body);
-    res.status(201).json(category);
+
+    return res.status(201).json({
+      success: true,
+      message: "Category created successfully",
+      data: category
+    });
   } catch (error) {
-    res.status(500).json({ message: "Failed to add category", error });
+    return res.status(500).json({
+      success: false,
+      message: "Failed to create category"
+    });
   }
 };
 
 export const listCategories = async (_: Request, res: Response) => {
   try {
     const categories = await InventoryService.getCategories();
-    res.json(categories);
-  } catch (error) {
-    res.status(500).json({ message: "Failed to fetch categories", error });
+
+    return res.status(200).json({
+      success: true,
+      message: "Categories fetched successfully",
+      data: categories
+    });
+  } catch {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch categories"
+    });
   }
 };
 
@@ -26,103 +41,184 @@ export const editCategory = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
 
-    const updatedCategory = await InventoryService.updateCategory("id", req.body);
+    const updated = await InventoryService.updateCategory("id", req.body);
 
-    if (!updatedCategory) {
-      return res.status(404).json({ message: "Category not found" });
+    if (!updated) {
+      return res.status(404).json({
+        success: false,
+        message: "Category not found"
+      });
     }
 
-    res.json(updatedCategory);
-  } catch (error) {
-    res.status(500).json({ message: "Failed to update category", error });
+    return res.status(200).json({
+      success: true,
+      message: "Category updated successfully",
+      data: updated
+    });
+  } catch {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to update category"
+    });
   }
 };
 
- //SUPPLIER CONTROLLERS
+
 
 export const addSupplier = async (req: Request, res: Response) => {
   try {
     const supplier = await InventoryService.createSupplier(req.body);
-    res.status(201).json(supplier);
-  } catch (error) {
-    res.status(500).json({ message: "Failed to add supplier", error });
+
+    return res.status(201).json({
+      success: true,
+      message: "Supplier added successfully",
+      data: supplier
+    });
+  } catch {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to add supplier"
+    });
   }
 };
 
 export const listSuppliers = async (_: Request, res: Response) => {
   try {
     const suppliers = await InventoryService.getSuppliers();
-    res.json(suppliers);
-  } catch (error) {
-    res.status(500).json({ message: "Failed to fetch suppliers", error });
+
+    return res.status(200).json({
+      success: true,
+      message: "Suppliers fetched successfully",
+      data: suppliers
+    });
+  } catch {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch suppliers"
+    });
   }
 };
 
-//ITEM CONTROLLERS
+
 
 export const addItem = async (req: Request, res: Response) => {
   try {
     const item = await InventoryService.createItem(req.body);
-    res.status(201).json(item);
-  } catch (error) {
-    res.status(500).json({ message: "Failed to add item", error });
+
+    return res.status(201).json({
+      success: true,
+      message: "Item added successfully",
+      data: item
+    });
+  } catch {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to add item"
+    });
   }
 };
 
 export const listItems = async (_: Request, res: Response) => {
   try {
     const items = await InventoryService.getItems();
-    res.json(items);
-  } catch (error) {
-    res.status(500).json({ message: "Failed to fetch items", error });
+
+    return res.status(200).json({
+      success: true,
+      message: "Items fetched successfully",
+      data: items
+    });
+  } catch {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch items"
+    });
   }
 };
 
- //STOCK CONTROLLERS
+
+
 export const stockIn = async (req: Request, res: Response) => {
   try {
-    const id = Array.isArray(req.params.id)
-      ? req.params.id[0]
-      : req.params.id;
-
+    const { id } = req.params;
     const { quantity } = req.body;
 
-    await InventoryService.stockIn(id, quantity);
-    res.json({ message: "Stock added successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "Failed to add stock", error });
+    if (!quantity || quantity <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Quantity must be greater than zero"
+      });
+    }
+
+    await InventoryService.stockIn("id", quantity);
+
+    return res.status(200).json({
+      success: true,
+      message: "Stock added successfully"
+    });
+  } catch (error: any) {
+    return res.status(400).json({
+      success: false,
+      message: error.message || "Failed to add stock"
+    });
   }
 };
 
 export const stockOut = async (req: Request, res: Response) => {
   try {
-    const id = Array.isArray(req.params.id)
-      ? req.params.id[0]
-      : req.params.id;
-
+    const { id } = req.params;
     const { quantity } = req.body;
 
-    await InventoryService.stockOut(id, quantity);
-    res.json({ message: "Stock removed successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "Failed to remove stock", error });
+    if (!quantity || quantity <= 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Quantity must be greater than zero"
+      });
+    }
+
+    await InventoryService.stockOut("id", quantity);
+
+    return res.status(200).json({
+      success: true,
+      message: "Stock removed successfully"
+    });
+  } catch (error: any) {
+    return res.status(400).json({
+      success: false,
+      message: error.message || "Failed to remove stock"
+    });
   }
 };
 
 export const listStock = async (_: Request, res: Response) => {
   try {
     const stock = await InventoryService.getStock();
-    res.json(stock);
-  } catch (error) {
-    res.status(500).json({ message: "Failed to fetch stock", error });
+
+    return res.status(200).json({
+      success: true,
+      message: "Stock fetched successfully",
+      data: stock
+    });
+  } catch {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch stock"
+    });
   }
 };
 
-export const inventoryReport = async (req: Request, res: Response) => {
+export const inventoryReport = async (_: Request, res: Response) => {
   try {
     const report = await InventoryService.getInventoryReport();
-    res.json(report);
-  } catch (error) {
-    res.status(500).json({ message: "Failed to generate inventory report", error });
+
+    return res.status(200).json({
+      success: true,
+      message: "Inventory report generated successfully",
+      data: report
+    });
+  } catch {
+    return res.status(500).json({
+      success: false,
+      message: "Failed to generate inventory report"
+    });
   }
-};
+}
